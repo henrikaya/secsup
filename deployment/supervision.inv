@@ -1,0 +1,11 @@
+[main-servers]
+vps ansible_port=40000
+
+[elasticsearch-server]
+elasticsearch ansible_port=40002
+
+[logstash-server]
+logstash ansible_port=40003
+
+[kibana-server]
+kibana ansible_port=40004

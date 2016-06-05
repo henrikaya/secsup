@@ -1,14 +1,84 @@
-server_address: "secsup.ddns.net"
+## Main vars
 
-deployment_ip: "81.67.89.24/32"
-ovh_ip: [ "92.222.184.0/24", "92.222.185.0/24", "92.222.186.0/24", "167.114.37.0/24", "151.80.118.87/32" ]
-consultation_ip: [ "81.67.89.24/32" ]
+# Target server FQDN. For example: www.mysite.com
+server_address: "YOUR SERVER FQDN"
 
-elasticsearch_ip: "172.18.0.2"
-logstash_ip: "172.18.0.3"
-kibana_ip: "172.18.0.4"
-ldap_ip: "172.18.0.5"
+# Deployment IP address. For example: 1.2.3.4/32
+deployment_ip: "YOUR DEPLOYMENT IP ADDRESS"
 
-apache_password: "s8i02aFi1UYbV"
+# If your server is hosted by OVH company, you have to allow some IP to contact your
+# server (for supervision considerations). For example: [ "90.91.92.93/24", "94.95.96.97/32" ]
+ovh_ip: [ "YOUR", "SUPERVISION", "IP", "LIST" ]
+
+# You can restrict consultation to some IP addresses.
+# For example: [ "5.6.7.8/32", "5.6.7.12/32" ]
+consultation_ip: [ "CONSULTATION", "IP" ]
+
+# Elasticsearch, Logstash, Kibana and LDAP servers IP are configured statically.
+# For example: "9.8.7.6", "9.8.7.5", ...
+elasticsearch_ip: "ELASTICSEARCH_IP"
+logstash_ip: "LOGSTASH_IP"
+kibana_ip: "KIBANA_IP"
+ldap_ip: "LDAP_IP"
+
+# Apache credentials (to allow front reverse proxy to query LDAP)
 apache_account: "cn=apache,{{ ldap_sw_accounts }}"
+apache_password: "s8i02aFi1UYbV"
 apache_description: "Account for Apache RP querying LDAP"
+
+## Vars for apache role
+
+# Target server FQDN. For example: www.mysite.com
+# TODO: redundant information with server_address variable, remove it.
+server_name: "YOUR SERVER FQDN"
+
+# Target server IP. For example: 2.4.6.8
+vps_ip: "YOUR SERVER IP"
+
+# LDAP credentials
+# ldap.authentication_url is the url used to query LDAP service.
+# For example: ldap://locahost:389/ou=people,dc=mysite,dc=com?cn"
+# ldap.bind_account is the account used by apache (front reverse proxy) to query LDAP service
+# ldap.bind_password is the password of this account
+# consultation_group is the LDAP group for users authorized to consult Kibana dashboards
+# For example: "cn=consultation,ou=groups,dc=mysite,dc=com"
+# TODO: the last part of this field has to be filled by other main variables.
+ldap:
+  authentication_url: "LDAP AUTHENTICATION URL"
+  bind_account: "{{ apache_account }}"
+  bind_password: "{{ apache_password }}"
+  consultation_group: "LDAP group for consultation authorization"
+
+## Vars for init role
+
+# Docker network used by Elasticsearch, Kibana, Logstash and LDAP containers.
+# Obviously this field has to match elasticsearch_ip, kibana_ip, etc.
+# For example if docker_network is 172.18.0.0/16, elasticsearch_ip (and others)
+# could be 172.18.0.2, 172.18.0.3, 172.18.0.4 and 172.18.0.5
+docker_network: "DOCKER NETWORK"
+
+# Name of interface attached to this network.
+# For example: br-baacb7eefd06
+docker_interface: "DOCKER INTERFACE NAME"
+
+## Vars for ldap role
+
+# LDAP base DN. For example: "dc=mysite,dc=com"
+# TODO: this base DN has to be filled from server FQDN.
+ldap_base_dn: "BASE DN"
+
+# LDAP admin password. For example: s5gd498fdsg3sdga15hry6
+ldap_admin_password: "ADMIN PASSWORD"
+
+# List of accounts authorized to consult Kibana dashboards
+
+user1_account:
+  name: "cn=user1,{{ ldap_people }}"
+  description: "Account for user1"
+  password: "passwordforuser1"
+
+user2_account:
+  name: "cn=user2,{{ ldap_people }}"
+  description: "Account for user2"
+  password: "passwordforuser2"
+
