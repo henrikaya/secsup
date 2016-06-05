@@ -1,0 +1,24 @@
+---
+
+- hosts: main-servers
+  remote_user: leo
+  roles:
+    - init
+    - ldap
+    - apache
+    - elk
+
+- hosts: logstash-server
+  remote_user: leo
+  roles:
+    - logstash
+
+- hosts: kibana-server
+  remote_user: leo
+  roles:
+    - kibana
+
+- hosts: elasticsearch-server
+  remote_user: leo
+  roles:
+    - elasticsearch

@@ -1,0 +1,82 @@
+---
+
+ - name: ensure host directory exists to persist openldap data
+   sudo: yes
+   file: name={{ item }} state=directory
+   with_items:
+     - "{{ openldap_config_path }}"
+     - "{{ openldap_db_path }}"
+
+ - name: ensure ldap docker is present
+   sudo: yes
+   docker:
+     name: "openldap"
+     image: "dinkel/openldap"
+     state: started
+     restart_policy: always
+     ports:
+       - 389:389
+     volumes:
+       - "{{ openldap_config_path }}:/etc/ldap"
+       - "{{ openldap_db_path }}:/var/lib/ldap"
+     env:
+       SLAPD_ORGANIZATION: "{{ ldap_domain_description }}"
+       SLAPD_DOMAIN: "{{ ldap_domain_root }}"
+       SLAPD_PASSWORD: "{{ ldap_admin_password }}"
+       SLAPD_ADDITIONAL_MODULES: "memberof"
+       SLAPD_ADDITIONAL_SCHEMAS: "authzldap"
+
+ - name: ensure basic groups exists in ldap
+   local_action: ldap_group
+   args:
+     name: "{{ item }}"
+     ldap_host: "{{ ldap_domain_root }}"
+     bind_dn: "{{ ldap_admin_dn }}"
+     bind_pwd: "{{ ldap_admin_password }}"
+     object_class: "organizationalUnit"
+   with_items:
+     - "{{ ldap_groups }}"
+     - "{{ ldap_people }}"
+     - "{{ ldap_sw_accounts }}"
+
+ - name: ensure documentation and consultation groups exists in ldap
+   local_action: ldap_group
+   args:
+     name: "{{ item }}"
+     ldap_host: "{{ ldap_domain_root }}"
+     bind_dn: "{{ ldap_admin_dn }}"
+     bind_pwd: "{{ ldap_admin_password }}"
+     object_class: "groupOfNames"
+   with_items:
+     - "{{ ldap_doc_group }}"
+     - "{{ ldap_consultation_group }}"
+
+ - name: ensure apache account exists in ldap for querying users & passwords
+   local_action: ldap_user
+   args:
+     name: "{{ apache_account }}"
+     ldap_host: "{{ ldap_domain_root }}"
+     bind_dn: "{{ ldap_admin_dn }}"
+     bind_pwd: "{{ ldap_admin_password }}"
+     user_description: "{{ apache_description }}"
+     user_password: "{{ apache_password }}"
+
+ - name: ensure some people accounts exist
+   local_action: ldap_user
+   args:
+     name: "{{ item.name }}"
+     ldap_host: "{{ ldap_domain_root }}"
+     bind_dn: "{{ ldap_admin_dn }}"
+     bind_pwd: "{{ ldap_admin_password }}"
+     user_description: "{{ item.description }}"
+     user_password: "{{ item.password }}"
+   with_items:
+     - "{{ leo_account }}"
+     - "{{ amelie_account }}"
+     - "{{ benjamin_account }}"
+     - "{{ nicolas_account }}"
+     - "{{ cyrille_account }}"
+     - "{{ peter_account }}"
+     - "{{ thomas_account }}"
+     - "{{ romain_account }}"
+     - "{{ jd_account }}"

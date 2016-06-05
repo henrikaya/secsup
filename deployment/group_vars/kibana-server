@@ -1,0 +1,3 @@
+elasticsearch_ip: "172.18.0.2"
+logstash_ip: "172.18.0.3"
+kibana_ip: "172.18.0.4"

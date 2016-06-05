@@ -1,0 +1,16 @@
+---
+
+ - name: ensure elasticsearch index templates directory exists
+   sudo: yes
+   file: path=/usr/share/elasticsearch/templates state=directory owner=elasticsearch group=elasticsearch
+
+ - name: ensure elasticsearch index template exists
+   sudo: yes
+   file: src=logstash-events-template.json dest=/usr/share/elasticsearch/templates/ owner=elasticsearch group=elasticsearch mode=0644
+
+ - name: ensure curl is installed
+   sudo: yes
+   apt: name=curl update_cache=yes force=yes
+
+ - name: put elasticsearch template into cluster
+   shell: curl -XPUT http://localhost:9200/_template/logstash?pretty -d@/usr/share/elasticsearch/template/logstash-events-template.json

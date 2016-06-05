@@ -1,0 +1,54 @@
+input {
+        file {
+                path => "/var/log/syslog"
+                        start_position => "beginning"
+        }
+}
+
+filter {
+
+        grok {
+                match => { "message" => "%{WORD}(.*)%{NUMBER} %{NUMBER}:%{NUMBER}:%{NUMBER} %{WORD} %{WORD:application}: %{GREEDYDATA}" }
+        }
+
+        if [application] == "kernel" {
+                grok {
+                        break_on_match => true
+                                patterns_dir => "/etc/logstash/grok/iptables.pattern"
+                                match => { "message" => "%{IPTABLES}" }
+                }
+
+                geoip {
+                        source => "nf_src_ip"
+                                target => "src_geo"
+                                database => "/etc/logstash/GeoLiteCity.dat"
+                }
+
+                mutate {
+                        convert => [ "[src_geo][coord]", "float" ]
+                }
+        }
+
+        if [application] == "apache" {
+                grok {
+                        match => { "message" => "%{WORD}(.*)%{NUMBER} %{NUMBER}:%{NUMBER}:%{NUMBER} %{WORD} %{WORD}: %{IP:client_ip} %{USER:ident} %{USER:auth} \[%{HTTPDATE:apache_timestamp}\] \"%{WORD:method} /%{NOTSPACE:request_page} HTTP/%{NUMBER:http_version}\" %{NUMBER:server_response} %{NUMBER:response_size}" }
+                }
+
+                geoip {
+                        source => "client_ip"
+                        target => "src_geo"
+                        database => "/etc/logstash/GeoLiteCity.dat"
+                }
+
+                mutate {
+                        convert => [ "[src_geo][coord]", "float" ]
+                }
+        }
+
+}
+
+output {
+        elasticsearch {
+                hosts => ["172.18.0.2:9200"]
+        }
+}

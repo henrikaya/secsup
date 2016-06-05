@@ -1,0 +1,17 @@
+---
+
+ - name: ensure logstash conf is present on disk
+   sudo: yes
+   template: src=supervision.conf.j2 dest=/etc/logstash/conf.d/supervision.conf owner=logstash group=logstash mode=0644
+
+ - name: ensure rsyslog is installed
+   sudo: yes
+   apt: name=rsyslog update_cache=yes state=present force=yes
+
+ - name: ensure rsyslog conf is present on disk
+   sudo: yes
+   file: src=rsyslog.conf dest=/etc/
+
+ - name: ensure rsyslog service is started
+   sudo: yes
+   service: name=rsyslog state=restarted

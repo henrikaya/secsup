@@ -1,0 +1,14 @@
+server_address: "secsup.ddns.net"
+
+deployment_ip: "81.67.89.24/32"
+ovh_ip: [ "92.222.184.0/24", "92.222.185.0/24", "92.222.186.0/24", "167.114.37.0/24", "151.80.118.87/32" ]
+consultation_ip: [ "81.67.89.24/32" ]
+
+elasticsearch_ip: "172.18.0.2"
+logstash_ip: "172.18.0.3"
+kibana_ip: "172.18.0.4"
+ldap_ip: "172.18.0.5"
+
+apache_password: "s8i02aFi1UYbV"
+apache_account: "cn=apache,{{ ldap_sw_accounts }}"
+apache_description: "Account for Apache RP querying LDAP"

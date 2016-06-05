@@ -1,0 +1,5 @@
+---
+
+ - name: ensure kibana conf is present on disk
+   sudo: yes
+   template: src=kibana.yml.j2 dest=/opt/kibana/config/ owner=kibana group=kibana mode=0644

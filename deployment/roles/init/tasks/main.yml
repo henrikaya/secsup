@@ -1,0 +1,57 @@
+---
+
+ - name: ensure iptables rules are present on disk
+   sudo: yes
+   template: src=iptables.rules.j2 dest=/etc/iptables.rules owner=root mode=0644
+
+ - name: ensure iptables rules are enabled
+   sudo: yes
+   shell: iptables-restore < /etc/iptables.rules
+
+ - name: ensure ip forwarding is enabled
+   sudo: yes
+   sysctl: name="net.ipv4.ip_forward" value=1 sysctl_set=yes
+
+ - name: install some tools 1
+   sudo: yes
+   apt: name=ca-certificates update_cache=yes state=present force=yes
+
+ - name: install some tools 2
+   sudo: yes
+   apt: name=apt-transport-https update_cache=yes state=present force=yes
+
+ - name: install docker key
+   sudo: yes
+   apt_key: keyserver=hkp://p80.pool.sks-keyservers.net:80 id=58118E89F3A912897C070ADBF76221572C52609D
+
+ - name: add Docker sources.list
+   sudo: yes
+   lineinfile: dest=/etc/apt/sources.list.d/docker.list line="deb https://apt.dockerproject.org/repo debian-jessie main" create=yes
+
+ - name: install docker-engine
+   sudo: yes
+   apt: name=docker-engine update_cache=yes state=present force=yes
+
+ - name: install pip
+   sudo: yes
+   apt: name=python-pip update_cache=yes state=present force=yes
+
+ - name: install virtualenv
+   sudo: yes
+   apt: name=virtualenv update_cache=yes state=present force=yes
+
+ - name: ensure docker-py is installed
+   sudo: yes
+   pip: name=docker-py
+
+ - name: ensure rsyslog is installed
+   sudo: yes
+   apt: name=rsyslog update_cache=yes state=present force=yes
+
+ - name: add rsyslog conf
+   sudo: yes
+   template: src=supervision-rsyslog.conf.j2 dest=/etc/rsyslog.d/supervision-rsyslog.conf owner=root mode=0644
+
+ - name: restart rsyslog service
+   sudo: yes
+   service: name=rsyslog state=restarted

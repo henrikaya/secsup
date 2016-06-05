@@ -1,0 +1,22 @@
+---
+
+ - name: ensure elk network exists
+   sudo: yes
+   shell: docker network create --subnet=172.18.0.0/16 elk-net
+   ignore_errors: yes
+
+ - name: ensure elasticsearch docker is present
+   sudo: yes
+   shell: docker run --net elk-net --ip {{ elasticsearch_ip }} --name elasticsearch -t elasticsearch
+   ignore_errors: yes
+
+ - name: ensure logstash docker is present
+   sudo: yes
+   shell: docker run --net elk-net --ip {{ logstash_ip }} --name logstash -t logstash
+   ignore_errors: yes
+
+ - name: ensure kibana docker is present
+   sudo: yes
+   shell: docker run --net elk-net --ip {{ kibana_ip }} --name kibana -t kibana
+   ignore_errors: yes
+
