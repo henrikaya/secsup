@@ -1,0 +1,14 @@
+
+default_path: "/var/www/html/"
+
+demo_uri: "http://{{ server_name }}/demo/"
+doc_uri: "http://{{ server_name }}/doc/"
+
+root_certs_path: "/etc/letsencrypt/archive/"
+
+main_certs_path: "{{ root_certs_path }}{{ server_name }}/"
+main_keys_path: "{{ root_certs_path }}{{ server_name }}/"
+server_certificate: "cert1.pem"
+server_key: "privkey1.pem"
+inter_certificate: "fullchain1.pem"
+

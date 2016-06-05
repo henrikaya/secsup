@@ -1,0 +1,15 @@
+
+openldap_config_path: "/data/ldap/slapd_config"
+openldap_db_path: "/data/ldap/slapd_database"
+
+ldap_domain_description: "Security Supervision"
+ldap_domain_root: "{{ server_address }}"
+ldap_admin_dn: "cn=admin,{{ ldap_base_dn }}"
+
+ldap_groups: "ou=groups,{{ ldap_base_dn }}"
+ldap_people: "ou=people,{{ ldap_base_dn }}"
+ldap_sw_accounts: "ou=swaccounts,{{ ldap_base_dn }}"
+
+ldap_doc_group: "cn=documentation,{{ ldap_groups }}"
+ldap_consultation_group: "cn=consultation,{{ ldap_groups }}"
+
