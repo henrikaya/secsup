@@ -26,6 +26,8 @@
        SLAPD_ADDITIONAL_MODULES: "memberof"
        SLAPD_ADDITIONAL_SCHEMAS: "authzldap"
 
+ - pause: seconds=20
+
  - name: ensure basic groups exists in ldap
    local_action: ldap_group
    args:

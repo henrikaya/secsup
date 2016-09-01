@@ -44,7 +44,24 @@ Connect it as root, change password and create a new user: adduser adminfra
 Add user in sudo group: usermod -a -G sudo adminfra
 Disable ssh as root: vim /etc/ssh/sshd_config and replace "PermitRootLogin yes" by "PermitRootLogin no"
 Change ssh port: vim /etc/ssh/sshd_config and replace "Port 22" by "Port 40000"
-Restart ssh service: sudo service ssh restart
+Restart ssh service: service ssh restart
+
+Next let's create certificates, using let's envrypt initiative.
+Connect to target VM as adminfra.
+Install jessie-backports: add this line in /etc/apt/sources.list : deb http://ftp.debian.org/debian/ jessie-backports main contrib non-free
+sudo apt update
+sudo apt-get install certbot -t jessie-backports
+sudo certbot certonly
+Chose : 2 - Automatically use a temporary webserver (standalone)
+Enter : adminfra@secsup.ovh
+Chose : Agree
+Enter : secsup.ovh
+Certificates have been saved at /etc/letsencrypt/live/secsup.ovh/fullchain.pem
+Copy certificates on adminfra home directory : sudo cp -r /etc/letsencrypt/archive/secsup.ovh ~
+Create www-data user: sudo adduser www-data
+Change certificates owner : sudo chown -R adm-infra:adm-infra ~/secsup.ovh/
+Change rights : sudo chmod 600 ~/secsup.ovh/privkey1.pem
+Get back all certificates directory on deploy VM: sudo scp -r /etc/letsencrypt/archive/secsup.ovh <deploy user>@<deploy ip>:~
 
 On deploy VM:
 Create ssh key: ssh-keygen

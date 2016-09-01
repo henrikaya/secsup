@@ -4,16 +4,19 @@
    sudo: yes
    lineinfile: dest=/etc/hosts state=present line="{{ vps_ip }} {{ server_name }}"
 
- - name: copy certificates
-   sudo: yes
-   copy: src={{ server_name }}.{{ item }} dest={{ main_certs_path }}/{{ item }} owner=root group=root mode=0666
-   with_items:
-     - "{{ server_certificate }}"
-     - "{{ inter_certificate }}"
+# Following tasks are commented because certificates are generated directly on target VM
+# before deployment (it's a prequisite), we don't need to copy them from deployment VM
 
- - name: copy private key
-   sudo: yes
-   copy: src={{ server_name }}.{{ server_key }} dest={{ main_keys_path }}/{{ server_key }} owner=root group=ssl-cert mode=0640
+# - name: copy certificates
+#   sudo: yes
+#   copy: src={{ server_name }}.{{ item }} dest={{ main_certs_path }}/{{ item }} owner=root group=root mode=0666
+#   with_items:
+#     - "{{ server_certificate }}"
+#     - "{{ inter_certificate }}"
+
+# - name: copy private key
+#   sudo: yes
+#   copy: src={{ server_name }}.{{ server_key }} dest={{ main_keys_path }}/{{ server_key }} owner=root group=ssl-cert mode=0640
 
  - name: ensure apache is installed
    sudo: yes
