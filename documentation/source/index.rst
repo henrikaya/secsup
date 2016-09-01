@@ -31,8 +31,31 @@ It's based on ELK technology (Elasticsearch, Logstash and Kibana) which is the s
 Git project
 ===========
 
+Prerequisites
+=============
+
+First:
+Go to ovh/amazon account on a web browser
+Install debian 8 on a VM
+Ensure there is a public dns associated to VM (example: secsup.ovh)
+
+On target VM:
+Connect it as root, change password and create a new user: adduser adminfra
+Add user in sudo group: usermod -a -G sudo adminfra
+Disable ssh as root: vim /etc/ssh/sshd_config and replace "PermitRootLogin yes" by "PermitRootLogin no"
+Change ssh port: vim /etc/ssh/sshd_config and replace "Port 22" by "Port 40000"
+Restart ssh service: sudo service ssh restart
+
+On deploy VM:
+Create ssh key: ssh-keygen
+Copy it on target VM: ssh-copy-id adminfra@secsup.ovh -p 40000
+Install ansible, python-yaml, python-paramiko
+
 Automatic deployment
 ====================
+
+Configure inventory : vim supervision.inv
+Launch Ansible : ansible-playbook -i supervision.inv -u adminfra supervision.yml -K -k
 
 Perspectives
 ============
